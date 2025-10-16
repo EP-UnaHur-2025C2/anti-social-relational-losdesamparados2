@@ -1,7 +1,18 @@
 const express = require('express')
 const app = express()
 const db = require('../db/models')
+const commentsRoute = require('./routes/comments.route')
+const postImagesRoute = require('./routes/post_images.route')
+const postRoute = require('./routes/post.route')
+const tagRoute = require('./routes/tag.route')
+const userRoute = require('./routes/user.route')
 
+app.use(express.json())
+app.use('/comments', commentsRoute)
+app.use('/postImages', postImagesRoute)
+app.use('/post', postRoute)
+app.use('/tag', tagRoute)
+app.use('/user', userRoute)
 
 app.listen(3001, async () => {
     console.log(`El servidor se inicio en el puerto 3001`)

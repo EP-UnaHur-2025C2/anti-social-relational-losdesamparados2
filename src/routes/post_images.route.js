@@ -1,15 +1,24 @@
-const { Router } = require('express')
-const route = Router()
-const {getPostImages, getPostImagesById, createPostImages, updatePostImages, deletePostImagesById} = require('../controllers/post_images.controllers')
+const { Router } = require('express');
+const route = Router();
 
-route.get('/', getPostImages)
+const {
+  getPostImages,
+  getPostImagesById,
+  createPostImages,
+  updatePostImages,
+  deletePostImagesById,
+  getPostImagesByPostId
+} = require('../controllers/post_images.controllers');
 
-route.get('/:id', getPostImagesById)
+// CRUD
+route.get('/', getPostImages);
+route.get('/:id', getPostImagesById);
+route.post('/', createPostImages);
+route.put('/:id', updatePostImages);
+route.delete('/:id', deletePostImagesById);
 
-route.post('/', createPostImages)
+// RUTA RELACION (opcional) - por ejemplo: /posts/:postId/images
+// Si montás estas rutas en otro router, ajustá el path.
+route.get('/posts/:postId', getPostImagesByPostId);
 
-route.put('/:id', updatePostImages)
-
-route.delete('/:id', deletePostImagesById)  
-
-module.exports = route
+module.exports = route;
