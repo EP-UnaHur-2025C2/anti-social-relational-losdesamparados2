@@ -10,7 +10,7 @@ const {
     updateCommentByPostId,
     deleteCommentByPostId,
     createComment,
-getCommentsByTime
+    getCommentsByTime
 } = require('../controllers/comment.controllers');
 
 // CRUD - el create lo dejamos también por si hace falta (el usuario crea) 
