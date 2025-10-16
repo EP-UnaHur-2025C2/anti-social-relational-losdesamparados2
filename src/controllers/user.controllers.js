@@ -24,10 +24,11 @@ const getUserById = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
+    console.log('body recibido ->', req.body);
   try {
-    const { nickName, mail } = req.body;
-    if (!nickName || !mail) return res.status(400).json({ error: 'Faltan datos requeridos' });
-    const nuevoUser = await User.create({ nickName, mail });
+    const { nickname, email } = req.body;
+    if (!nickname || !email) return res.status(400).json({ error: 'Faltan datos requeridos' });
+    const nuevoUser = await User.create({ nickname, email });
     res.status(201).json(nuevoUser);
   } catch (err) {
     console.error(err);
@@ -38,10 +39,10 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const id = req.params.id;
-    const { nickName, mail } = req.body;
+    const { nickname, email } = req.body;
     const usuario = await User.findByPk(id);
     if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
-    await usuario.update({ nickName, mail });
+    await usuario.update({ nickname, email });
     res.status(200).json(usuario);
   } catch (err) {
     console.error(err);
