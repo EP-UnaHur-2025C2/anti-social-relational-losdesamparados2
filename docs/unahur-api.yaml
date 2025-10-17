@@ -1,0 +1,293 @@
+openapi: 3.0.3
+info:
+  title: UnaHur Anti-Social Net API
+  description: API para gestionar usuarios, publicaciones, comentarios, imágenes y etiquetas de la red social Anti-Social Net.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor local de desarrollo
+
+tags:
+  - name: Users
+    description: Operaciones sobre los usuarios
+  - name: Posts
+    description: Operaciones sobre publicaciones
+  - name: Comments
+    description: Operaciones sobre comentarios
+  - name: Tags
+    description: Operaciones sobre etiquetas
+  - name: Images
+    description: Operaciones sobre imágenes de posts
+
+paths:
+
+  /users:
+    get:
+      tags: [Users]
+      summary: Listar todos los usuarios
+      responses:
+        '200':
+          description: Lista de usuarios
+    post:
+      tags: [Users]
+      summary: Crear un nuevo usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Usuario creado exitosamente
+
+  /users/{nickName}:
+    parameters:
+      - name: nickName
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags: [Users]
+      summary: Obtener un usuario por su nickName
+      responses:
+        '200':
+          description: Usuario encontrado
+        '404':
+          description: Usuario no encontrado
+    put:
+      tags: [Users]
+      summary: Actualizar datos de un usuario
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Usuario actualizado
+    delete:
+      tags: [Users]
+      summary: Eliminar un usuario
+      responses:
+        '204':
+          description: Usuario eliminado
+
+  /posts:
+    get:
+      tags: [Posts]
+      summary: Listar todas las publicaciones
+      responses:
+        '200':
+          description: Lista de publicaciones
+    post:
+      tags: [Posts]
+      summary: Crear una publicación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '201':
+          description: Publicación creada
+
+  /posts/{postId}:
+    parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: [Posts]
+      summary: Obtener una publicación por ID
+      responses:
+        '200':
+          description: Publicación encontrada
+        '404':
+          description: Publicación no encontrada
+    put:
+      tags: [Posts]
+      summary: Actualizar una publicación
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '200':
+          description: Publicación actualizada
+    delete:
+      tags: [Posts]
+      summary: Eliminar una publicación
+      responses:
+        '204':
+          description: Publicación eliminada
+
+  /comments:
+    get:
+      tags: [Comments]
+      summary: Listar todos los comentarios visibles
+      responses:
+        '200':
+          description: Lista de comentarios
+    post:
+      tags: [Comments]
+      summary: Crear un comentario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+      responses:
+        '201':
+          description: Comentario creado
+
+  /tags:
+    get:
+      tags: [Tags]
+      summary: Listar todas las etiquetas
+      responses:
+        '200':
+          description: Lista de etiquetas
+    post:
+      tags: [Tags]
+      summary: Crear una nueva etiqueta
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tag'
+      responses:
+        '201':
+          description: Etiqueta creada
+
+  /posts/{postId}/tags/{tagId}:
+    parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: tagId
+        in: path
+        required: true
+        schema:
+          type: integer
+    post:
+      tags: [Posts]
+      summary: Asociar una etiqueta a una publicación
+      responses:
+        '200':
+          description: Etiqueta asociada correctamente
+
+  /posts/{postId}/images:
+    parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: ID del post al cual se asociará la imagen
+    post:
+      tags: [Images]
+      summary: Agregar una imagen a un post
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Imagen subida correctamente
+        '400':
+          description: Error en la solicitud (por ejemplo, post no encontrado o formato inválido)
+
+components:
+  schemas:
+    User:
+      type: object
+      required: [nickName, email]
+      properties:
+        nickName:
+          type: string
+          example: juan123
+        email:
+          type: string
+          format: email
+          example: juan@mail.com
+        name:
+          type: string
+          example: Juan Pérez
+
+    Post:
+      type: object
+      required: [userId, description]
+      properties:
+        id:
+          type: integer
+          example: 1
+        userId:
+          type: integer
+          example: 3
+        description:
+          type: string
+          example: "Mi primera publicación"
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostImage'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+
+    PostImage:
+      type: object
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+          example: "https://miapi.com/uploads/foto1.jpg"
+
+    Comment:
+      type: object
+      required: [postId, userId, text]
+      properties:
+        id:
+          type: integer
+        postId:
+          type: integer
+        userId:
+          type: integer
+        text:
+          type: string
+          example: "Muy buena publicación!"
+        visible:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          example: 2025-10-15T18:23:00Z
+
+    Tag:
+      type: object
+      required: [name]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          example: "tecnología"
