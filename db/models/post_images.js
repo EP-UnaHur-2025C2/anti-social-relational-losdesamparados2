@@ -4,11 +4,7 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Post_Images extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+    
     static associate(models) {
       Post_Images.belongsTo(models.Post, {
         foreignKey: 'postId'
@@ -16,8 +12,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Post_Images.init({
-    Url: DataTypes.STRING,
-    postId: {type: DataTypes.STRING}
+    url: {type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+              isUrl: { msg: 'Debe ser una URL válida' }
+          }},
+    postId: {type: DataTypes.INTEGER, allowNull: false}
   }, {
     sequelize,
     modelName: 'Post_Images',

@@ -1,6 +1,6 @@
 'use strict';
 const {
-  Model
+  Model,
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Comment extends Model {
@@ -19,12 +19,19 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Comment.init({
-    texto: DataTypes.STRING,
-    postId: {type: DataTypes.STRING},
-    userId: {type: DataTypes.STRING, allowNull:false },
+    texto: {type: DataTypes.STRING, allowNull:false,
+      validate: {
+      notEmpty: {
+        msg: 'El comentario no puede estar vacío'
+      }
+     }
+     },
+    postId: {type: DataTypes.INTEGER},
+    userId: {type: DataTypes.INTEGER, allowNull:false },
   }, {
     sequelize,
     modelName: 'Comment',
+    
   });
   return Comment;
 };

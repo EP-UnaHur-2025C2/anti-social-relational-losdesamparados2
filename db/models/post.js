@@ -4,11 +4,7 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Post extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+  
     static associate(models) {
       Post.belongsTo(models.User, {
         foreignKey: 'userId'
@@ -27,8 +23,14 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Post.init({
-    texto: DataTypes.STRING,
-    userId:{type: DataTypes.STRING, allowNull:false }
+    texto: {type: DataTypes.TEXT, allowNull:false,
+      notEmpty: { msg: 'El post no puede estar vacío' },
+      len: {
+        args: [1, 1000],
+        msg: 'El post debe tener entre 1 y 1000 caracteres'
+      }
+     },
+    userId:{type: DataTypes.INTEGER, allowNull:false }
 
   }, {
     sequelize,
