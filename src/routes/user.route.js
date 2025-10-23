@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const route = Router()
+const {validateUser} = require('../middlewares/validateUser')
 const {
     getUser,
     getUserById,

@@ -27,8 +27,7 @@ module.exports = {
     validateUser
 }
 
-//en userRoutes poner const {validarUser} = require('../middlewares/validateUser')
-// en router.get ('/user', validarUser, userController.getUsers);
+
 
 
 

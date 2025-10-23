@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const route = Router()
+const {validateTag} = require('../middlewares/validateTag')
 const {
     getTag,
     getTagById,

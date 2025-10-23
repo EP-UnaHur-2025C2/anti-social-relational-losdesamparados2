@@ -44,5 +44,3 @@ module.exports = {
 }
 
 
-//en userRoutes poner const {validatePost} = require('../middlewares/validatePost');
-// en router.get ('/posts', validatePost, postController.getPosts);

@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const route = Router()
+const {validatePost}= require('../middlewares/validatePost')
 const {
     getPost,
     getPostById,
@@ -12,6 +13,8 @@ const {
     assignTagToPost,
     createCommentInPostIdByUserId
 } = require('../controllers/post.controllers')
+
+
 
 // CRUD
 route.get('/', getPost)
