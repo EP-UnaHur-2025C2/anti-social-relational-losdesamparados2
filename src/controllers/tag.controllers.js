@@ -66,9 +66,7 @@ const getPostByTagId = async (req, res) => {
     const tagId = req.params.tagId;
     const tag = await Tag.findByPk(tagId, { include: [{ model: Post }] });
     if (!tag) return res.status(404).json({ error: 'Tag no encontrado' });
-    // Dependiendo del alias de la asociación el array puede llamarse tag.Posts o tag.Post
-    // devolvemos lo que exista o un array vacío
-    const posts = tag.Posts ?? tag.posts ?? tag.Post ?? [];
+    const posts = tag.Posts ?? [];
     res.status(200).json(posts);
   } catch (err) {
     console.error(err);
@@ -83,21 +81,14 @@ const assignTagToPost = async (req, res) => {
     const tag = await Tag.findByPk(tagId);
     const post = await Post.findByPk(postId);
     if (!tag || !post) return res.status(404).json({ error: 'Post o Tag no encontrado' });
-
-    if (typeof post.addTag === 'function') {
-      await post.addTag(tag); // many-to-many association
-    } else if (post.update) {
-      // fallback if Post has tagId field
-      await post.update({ tagId });
-    }
-    res.status(200).json({ message: 'Tag asignado', tag });
+    await post.addTag(tag); 
+    res.status(200).json({ message: 'Tag asignado al post', tag });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error al asignar tag al post' });
   }
 };
 
-// Opcional: quitar etiqueta de un post (si necesitás esta operación)
 const removeTagFromPost = async (req, res) => {
   try {
     const tagId = req.params.tagId;
@@ -105,19 +96,8 @@ const removeTagFromPost = async (req, res) => {
     const tag = await Tag.findByPk(tagId);
     const post = await Post.findByPk(postId);
     if (!tag || !post) return res.status(404).json({ error: 'Post o Tag no encontrado' });
-
-    if (typeof post.removeTag === 'function') {
       await post.removeTag(tag);
-      return res.status(200).json({ message: 'Tag removido del post' });
-    }
-
-    // fallback: si existe campo tagId en Post
-    if (post.tagId && String(post.tagId) === String(tagId)) {
-      await post.update({ tagId: null });
-      return res.status(200).json({ message: 'Tag removido del post (fallback)' });
-    }
-
-    res.status(400).json({ error: 'No es posible remover el tag (sin asociación definida)' });
+      res.status(200).json({ message: 'Tag removido del post' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error al remover tag del post' });

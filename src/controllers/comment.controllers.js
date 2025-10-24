@@ -41,8 +41,9 @@ const updateComment = async (req, res) => {
 const deleteCommentById = async (req, res) => {
     try {
         const id = req.params.id;
-        await Comment.destroy({ where: { id } }); // destroy en lugar de remove
-        res.status(204).json({ message: 'Comentario eliminado correctamente' });
+        const deleted = await Comment.destroy({ where: { id } }); // destroy en lugar de remove
+        if (!deleted) return res.status(404).json({ error: 'Comentario no encontrado' });
+        res.status(204).json();
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Error al eliminar comentario' });
@@ -68,8 +69,8 @@ const createCommentInPostId = async (req, res) => {
         const post = await Post.findByPk(postId);
         if (!post) return res.status(404).json({ error: 'Post no encontrado' });
 
-        // si definiste asociación Post.hasMany(Comment) y Post.prototype.createComment existe:
-        const nuevoComentario = await post.createComment ? await post.createComment(data) : await Comment.create({ ...data, postId });
+        
+        const nuevoComentario = await post.createComment(data);
         res.status(201).json(nuevoComentario);
     } catch (err) {
         console.error(err);
@@ -81,7 +82,7 @@ const updateCommentByPostId = async (req, res) => {
     try {
         const postId = req.params.postId;
         const commentsId = req.params.commentsId;
-        const { texto } = req.body;
+        const texto = req.body.texto;
         const comentario = await Comment.findOne({ where: { id: commentsId, postId } });
         if (!comentario) return res.status(404).json({ error: 'Comentario no encontrado para ese post' });
         comentario.texto = texto;

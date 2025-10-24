@@ -26,6 +26,9 @@ const getPostImagesById = async (req, res) => {
 const createPostImages = async (req, res) => {
   try {
     const data = req.body;
+    const postId = data.postId;
+    const post = await Post.findByPk(postId);
+    if (!post) return res.status(404).json({ error: 'Post no encontrado' });
     const nuevoPostImages = await post_images.create(data);
     res.status(201).json(nuevoPostImages);
   } catch (err) {
@@ -66,15 +69,6 @@ const deletePostImagesById = async (req, res) => {
 const getPostImagesByPostId = async (req, res) => {
   try {
     const postId = req.params.postId;
-    // si tienes la asociación: Post.hasMany(post_images)
-    if (Post && Post.findByPk) {
-      const post = await Post.findByPk(postId, { include: [{ model: post_images }] });
-      if (!post) return res.status(404).json({ error: 'Post no encontrado' });
-      // si include funciona, devolver las imágenes relacionadas
-      return res.status(200).json(post.post_images || post.postImages || []);
-    }
-
-    // fallback: buscar por campo postId en la tabla post_images
     const data = await post_images.findAll({ where: { postId } });
     res.status(200).json(data);
   } catch (err) {
