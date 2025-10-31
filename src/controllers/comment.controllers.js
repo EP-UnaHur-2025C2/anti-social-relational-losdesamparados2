@@ -15,7 +15,6 @@ const getCommentsById = async (req, res) => {
     try {
         const id = req.params.id;
         const data = await Comment.findByPk(id);
-        if (!data) return res.status(404).json({ error: 'Comentario no encontrado' });
         res.status(200).json(data);
     } catch (err) {
         console.error(err);
@@ -28,7 +27,6 @@ const updateComment = async (req, res) => {
         const id = req.params.id;
         const texto = req.body.texto;
         const comentario = await Comment.findByPk(id);
-        if (!comentario) return res.status(404).json({ error: 'Comentario no encontrado' });
         comentario.texto = texto;
         await comentario.save();
         res.status(200).json(comentario);
@@ -41,8 +39,7 @@ const updateComment = async (req, res) => {
 const deleteCommentById = async (req, res) => {
     try {
         const id = req.params.id;
-        const deleted = await Comment.destroy({ where: { id } }); // destroy en lugar de remove
-        if (!deleted) return res.status(404).json({ error: 'Comentario no encontrado' });
+        await Comment.destroy({ where: { id } }); 
         res.status(204).json();
     } catch (err) {
         console.error(err);
@@ -67,9 +64,6 @@ const createCommentInPostId = async (req, res) => {
         const postId = req.params.postId;
         const data = req.body;
         const post = await Post.findByPk(postId);
-        if (!post) return res.status(404).json({ error: 'Post no encontrado' });
-
-        
         const nuevoComentario = await post.createComment(data);
         res.status(201).json(nuevoComentario);
     } catch (err) {
@@ -84,7 +78,6 @@ const updateCommentByPostId = async (req, res) => {
         const commentsId = req.params.commentsId;
         const texto = req.body.texto;
         const comentario = await Comment.findOne({ where: { id: commentsId, postId } });
-        if (!comentario) return res.status(404).json({ error: 'Comentario no encontrado para ese post' });
         comentario.texto = texto;
         await comentario.save();
         res.status(200).json(comentario);
@@ -106,7 +99,7 @@ const deleteCommentByPostId = async (req, res) => {
     }
 };
 
-// ATRIBUTO CALCULADO
+// ATRIBUTO CALCULADO // HAY QUE REVISAR SI FUNCIONA
 const getCommentsByTime = async (req, res) => {
     try {
         const todosLosComentarios = await Comment.findAll();

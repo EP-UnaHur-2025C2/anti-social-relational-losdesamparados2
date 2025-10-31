@@ -15,7 +15,6 @@ const getTagById = async (req, res) => {
   try {
     const id = req.params.id;
     const data = await Tag.findByPk(id);
-    if (!data) return res.status(404).json({ error: 'Tag no encontrado' });
     res.status(200).json(data);
   } catch (err) {
     console.error(err);
@@ -39,7 +38,6 @@ const updateTag = async (req, res) => {
     const id = req.params.id;
     const { nombre } = req.body;
     const tag = await Tag.findByPk(id);
-    if (!tag) return res.status(404).json({ error: 'Tag no encontrado' });
     await tag.update({ nombre });
     res.status(200).json(tag);
   } catch (err) {
@@ -48,11 +46,10 @@ const updateTag = async (req, res) => {
   }
 };
 
-const deleteTagById = async (req, res) => {
+const deleteTag = async (req, res) => {
   try {
     const id = req.params.id;
-    const eliminado = await Tag.destroy({ where: { id } }); // destroy en vez de remove
-    if (!eliminado) return res.status(404).json({ error: 'Tag no encontrado' });
+    await Tag.destroy({ where: { id } });
     res.status(204).send();
   } catch (err) {
     console.error(err);
@@ -64,9 +61,8 @@ const deleteTagById = async (req, res) => {
 const getPostByTagId = async (req, res) => {
   try {
     const tagId = req.params.tagId;
-    const tag = await Tag.findByPk(tagId, { include: [{ model: Post }] });
-    if (!tag) return res.status(404).json({ error: 'Tag no encontrado' });
-    const posts = tag.Posts ?? [];
+    const tag = await Tag.findByPk(tagId);
+    const posts = await tag.getPosts();
     res.status(200).json(posts);
   } catch (err) {
     console.error(err);
@@ -80,7 +76,6 @@ const assignTagToPost = async (req, res) => {
     const postId = req.params.postId;
     const tag = await Tag.findByPk(tagId);
     const post = await Post.findByPk(postId);
-    if (!tag || !post) return res.status(404).json({ error: 'Post o Tag no encontrado' });
     await post.addTag(tag); 
     res.status(200).json({ message: 'Tag asignado al post', tag });
   } catch (err) {
@@ -89,15 +84,14 @@ const assignTagToPost = async (req, res) => {
   }
 };
 
-const removeTagFromPost = async (req, res) => {
+const removeTagFromPostId = async (req, res) => {
   try {
     const tagId = req.params.tagId;
     const postId = req.params.postId;
     const tag = await Tag.findByPk(tagId);
     const post = await Post.findByPk(postId);
-    if (!tag || !post) return res.status(404).json({ error: 'Post o Tag no encontrado' });
-      await post.removeTag(tag);
-      res.status(200).json({ message: 'Tag removido del post' });
+    await post.removeTag(tag);
+    res.status(200).json({ message: 'Tag removido del post' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error al remover tag del post' });
@@ -109,8 +103,8 @@ module.exports = {
   getTagById,
   createTag,
   updateTag,
-  deleteTagById,
+  deleteTag,
   getPostByTagId,
   assignTagToPost,
-  removeTagFromPost
+  removeTagFromPostId
 };

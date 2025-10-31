@@ -16,9 +16,7 @@ route.get('/:id', getPostImagesById);
 route.post('/', createPostImages);
 route.put('/:id', updatePostImages);
 route.delete('/:id', deletePostImagesById);
-
-// RUTA RELACION (opcional) - por ejemplo: /posts/:postId/images
-// Si montás estas rutas en otro router, ajustá el path.
+// RELACION: obtener imágenes de un post por postId
 route.get('/posts/:postId', getPostImagesByPostId);
 
 module.exports = route;
