@@ -37,8 +37,10 @@ const updatePost = async (req, res) => {
 
 const createPost = async (req, res) => {
     try {
-        const { texto, userId, imagen} = req.body; 
-        const nuevoPost = await Post.create({ texto, userId });
+        const userId  = req.params.userId
+        const { imagen, texto } = req.body;
+        const nuevoPost = await Post.create({ texto:texto, userId: userId  });
+
         if (imagen) {
             await Post_Images.create({ url: imagen, postId: nuevoPost.id });
         }

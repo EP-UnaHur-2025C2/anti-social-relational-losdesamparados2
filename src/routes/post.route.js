@@ -1,6 +1,7 @@
 const { Router } = require('express')
 const route = Router()
-const {validatePost}= require('../middlewares/validatePost')
+const {validatePost} = require('../middlewares/validatePost')
+const {validateUserId} = require('../middlewares/validateUser')
 const {
     getPost,
     getPostById,
@@ -19,16 +20,15 @@ const {
 // CRUD
 route.get('/', getPost)
 route.get('/:id', getPostById)
-route.post('/', createPost) // creo que esto no va porque el usuario crea el post
 route.put('/:id', updatePost)
 route.delete('/:id', deletePostById)  
 
 // RELACIONES
-route.get('/user/:id', getPostsByUserId) //Trae el post de un usuario específico
-route.post('/:userId', validatePost, createPost) // crea un comentario en un post específico hecho por un usuario específico //SIN HACER EL CONTROLADOR
-route.get('/tag/:tagId', getPostsByTagId) // trae los posts que tienen un tag específico
-route.get('/:id/images', getPostImagesByPostId) // trae las imagenes de un post específico
-route.post('/:postId/tag/:tagId', assignTagToPost) // asigna un tag a un post específico
+route.get('/user/:userId/posts', getPostsByUserId)
+route.post('/user/:userId', validateUserId, validatePost, createPost)
+route.get('/tag/:tagId/posts', getPostsByTagId)
+route.get('/:postId/images', getPostImagesByPostId)
+route.post('/:postId/tag/:tagId', assignTagToPost)
 
 
 module.exports = route

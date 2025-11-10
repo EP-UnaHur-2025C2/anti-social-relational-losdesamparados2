@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const {User} = require('../../db/models')
 
 const userSchema = Joi.object({
 nickName: Joi.string().alphanum().min(3).max(30).required(),
@@ -22,9 +23,18 @@ const validateUser = (req, res, next) => {
   next();
 };
 
+const validateUserId = (req, res, next) => {
+  const { error } = User.findByPk(req.params.id); 
+  if (error) {
+    return res.status(400).json({ error: error.message });
+  }
+  next();
+};
+
 
 module.exports = {
-    validateUser
+    validateUser, 
+    validateUserId
 }
 
 
