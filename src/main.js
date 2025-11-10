@@ -6,6 +6,11 @@ const postImagesRoute = require('./routes/post_images.route')
 const postRoute = require('./routes/post.route')
 const tagRoute = require('./routes/tag.route')
 const userRoute = require('./routes/user.route')
+const swaggerUi = require('swagger-ui-express')
+const YAML = require('yamljs')
+
+const swaggerDocument = YAML.load(path.join(__dirname, './doc/antisocialUnahur-api.yaml'))
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.use(express.json())
 app.use('/comments', commentsRoute)
