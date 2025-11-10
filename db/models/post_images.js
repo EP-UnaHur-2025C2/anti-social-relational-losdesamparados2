@@ -13,10 +13,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Post_Images.init({
     url: {type: DataTypes.STRING,
-            allowNull: false,
-            validate: {
-              isUrl: { msg: 'Debe ser una URL válida' }
-          }},
+            allowNull: false},
     postId: {type: DataTypes.INTEGER, allowNull: false}
   }, {
     sequelize,

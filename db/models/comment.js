@@ -19,19 +19,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Comment.init({
-    texto: {type: DataTypes.STRING, allowNull:false,
-      validate: {
-      notEmpty: {
-        msg: 'El comentario no puede estar vacío'
-      }
-     }
-     },
+    texto: {type: DataTypes.STRING, allowNull:false},
     postId: {type: DataTypes.INTEGER},
     userId: {type: DataTypes.INTEGER, allowNull:false },
   }, {
     sequelize,
-    modelName: 'Comment',
-    
+    modelName: 'Comment'
   });
   return Comment;
 };

@@ -23,15 +23,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Post.init({
-    texto: {type: DataTypes.TEXT, allowNull:false,
-      notEmpty: { msg: 'El post no puede estar vacío' },
-      len: {
-        args: [1, 1000],
-        msg: 'El post debe tener entre 1 y 1000 caracteres'
-      }
-     },
+    texto: {type: DataTypes.TEXT, allowNull:false},
     userId:{type: DataTypes.INTEGER, allowNull:false }
-
   }, {
     sequelize,
     modelName: 'Post',

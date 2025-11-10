@@ -25,7 +25,7 @@ route.delete('/:id', deletePostById)
 
 // RELACIONES
 route.get('/user/:id', getPostsByUserId) //Trae el post de un usuario específico
-route.post('/:postId/comments/:userId', createCommentInPostIdByUserId) // crea un comentario en un post específico hecho por un usuario específico //SIN HACER EL CONTROLADOR
+route.post('/:userId', validatePost, createPost) // crea un comentario en un post específico hecho por un usuario específico //SIN HACER EL CONTROLADOR
 route.get('/tag/:tagId', getPostsByTagId) // trae los posts que tienen un tag específico
 route.get('/:id/images', getPostImagesByPostId) // trae las imagenes de un post específico
 route.post('/:postId/tag/:tagId', assignTagToPost) // asigna un tag a un post específico

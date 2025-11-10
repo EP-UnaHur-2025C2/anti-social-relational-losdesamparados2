@@ -1,4 +1,7 @@
-const { Comment, Post, User } = require('../../db/models');
+const { Comment } = require('../../db/models');
+const {createCommentInPostIdByUserId} = require('./post.controllers')
+
+
 
 // CRUD
 const getComments = async (req, res) => {
@@ -49,8 +52,9 @@ const deleteCommentById = async (req, res) => {
 
 const createComment = async (req, res) => {
     try {
+        const {id, postId} = req.params;
         const data = req.body;
-        const comentarioNuevo = await Comment.create(data);
+        const comentarioNuevo = await Comment.create(data, id , postId);
         res.status(201).json(comentarioNuevo);
     } catch (err) {
         console.error(err);
@@ -61,10 +65,10 @@ const createComment = async (req, res) => {
 // RELACION COMMENT - POST
 const createCommentInPostId = async (req, res) => {
     try {
-        const postId = req.params.postId;
+        const {id, postId} = req.params;
         const data = req.body;
-        const post = await Post.findByPk(postId);
-        const nuevoComentario = await post.createComment(data);
+        const nuevoComentario = await Comment.create(data, id,  postId);
+        await createCommentInPostIdByUserId(nuevoComentario.id , postId)
         res.status(201).json(nuevoComentario);
     } catch (err) {
         console.error(err);

@@ -1,5 +1,7 @@
 const { Router } = require('express');
 const route = Router();
+const {validateCreateComment} = require('../middlewares/validateComment');
+
 
 const {
     getComments,
@@ -21,7 +23,7 @@ route.delete('/:id', deleteCommentById);
 route.post('/', createComment); // opcional: si querés permitir crear comentario general
 
 // RELACION POST - COMMENTS
-route.post('/:postId/comments', createCommentInPostId); // Crea un comentario para un post especifico
+route.post('/:postId/comments',validateCreateComment, createCommentInPostId); // Crea un comentario para un post especifico
 route.put('/:postId/comments/:commentsId', updateCommentByPostId); // Actualiza un comentario de un post específico
 route.delete('/:postId/comments/:commentsId', deleteCommentByPostId); // Elimina un comentario de un post específico
 

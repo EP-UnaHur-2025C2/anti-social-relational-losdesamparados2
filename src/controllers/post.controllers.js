@@ -20,6 +20,7 @@ const getPostById = async (req, res) => {
         res.status(500).json({ error: 'Error al obtener post' });
     }
 };
+
 const updatePost = async (req, res) => {
     try {
         const id = req.params.id;
@@ -33,9 +34,10 @@ const updatePost = async (req, res) => {
         res.status(500).json({ error: 'Error al actualizar post' });
     }
 };   
+
 const createPost = async (req, res) => {
     try {
-        const { texto, userId, imagen } = req.body; 
+        const { texto, userId, imagen} = req.body; 
         const nuevoPost = await Post.create({ texto, userId });
         if (imagen) {
             await Post_Images.create({ url: imagen, postId: nuevoPost.id });
@@ -109,16 +111,10 @@ const assignTagToPost = async (req, res) => {
 };
 
 const createCommentInPostIdByUserId = async (req, res) => {
-    try {
-        const { postId, userId } = req.params;
-        const { texto } = req.body;
-        const post = await Post.findByPk(postId);
-        const nuevoComentario = await post.createComment({ texto, userId });
-        res.status(201).json(nuevoComentario);
-    } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al crear comentario en el post' });
-    }
+        const { commentId, postId} = req.params;
+        Post.update(
+            { comment: commentId},
+            {  where:  postId   })
 };  
 
 module.exports = {getPost, getPostById, updatePost, createPost, deletePostById, getPostsByUserId, getPostsByTagId, getPostImagesByPostId, assignTagToPost, createCommentInPostIdByUserId}
